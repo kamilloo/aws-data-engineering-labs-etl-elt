@@ -1,0 +1,4 @@
+order_id,customer_id,product,quantity,price,date
+101,1,Book,2,10,2024-01-01
+102,2,Pen,5,2,2024-01-02
+103,3,Notebook,,5,2024/01/03
