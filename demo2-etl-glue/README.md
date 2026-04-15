@@ -10,10 +10,15 @@
 ```
 
 2. Go to AWS Glue → ETL Jobs
-3. Use Script etl_script.py
-4. 
-2. Open Athena and Set query result location (S3 bucket) if needed
-3. Create tables:
+3. Add Glue Job
+   - Use Script etl_script.py, 
+   - Job type: Spark
+   - set name
+   - set IAM Role
+   - save
+4. Run & wait
+5. Open Athena and Set query result location (S3 bucket) if needed
+6. Create tables:
 
 ```sql
 CREATE EXTERNAL TABLE final_orders (
@@ -31,7 +36,7 @@ STORED AS PARQUET
 LOCATION 's3://etl-elt-lab-student1/data/processed/final/';
 ```
 
-4. Query final results:
+7. Query final results:
 ```SQL
 SELECT * FROM final_orders LIMIT 10;
 ```
