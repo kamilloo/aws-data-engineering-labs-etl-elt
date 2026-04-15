@@ -44,7 +44,7 @@ By completing these labs, you will be able to:
     v                       v
 
 +----------------------+   +------------------------------+
-|    ETL (AWS Glue)    |   |   ELT (Athena / Redshift)    |
+|    ETL (AWS Glue)    |   |   ELT (Athena)    |
 | Transform BEFORE     |   | Transform AFTER loading      |
 | loading              |   | (SQL inside warehouse)       |
 +----------+-----------+   +-------------+----------------+
@@ -79,11 +79,7 @@ aws-data-engineering-labs-etl-elt/
 │
 ├── demo1-data-lake-athena/
 │   └── README.md         # Query raw data (ELT style)
-│
-├── demo2-elt-redshift/
-│   └── transform.sql     # ELT transformations
-│
-├── demo3-etl-glue/
+├── demo2-etl-glue/
 │   └── etl_script.py     # ETL pipeline script
 │
 └── README.md
@@ -105,19 +101,7 @@ aws-data-engineering-labs-etl-elt/
 
 ---
 
-### 🥈 Demo 2 — ELT in Data Warehouse
-
-**Tool:** Amazon Redshift
-
-* Load raw data into warehouse
-* Transform using SQL
-* Create analytics-ready tables
-
-👉 Shows **modern cloud data workflows**
-
----
-
-### 🥉 Demo 3 — ETL Pipeline
+### 🥉 Demo 2 — ETL Pipeline
 
 **Tool:** AWS Glue
 
@@ -138,7 +122,7 @@ aws-data-engineering-labs-etl-elt/
    👉 **Recommended order:**
 
    ```
-   Demo 1 → Demo 2 → Demo 3
+   Demo 1 → Demo 2
    ```
 
 3. Run queries / scripts in each demo folder
@@ -169,7 +153,6 @@ aws-data-engineering-labs-etl-elt/
 
 * Amazon S3
 * Amazon Athena
-* Amazon Redshift
 * AWS Glue
 
 ---
