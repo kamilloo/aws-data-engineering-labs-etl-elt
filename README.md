@@ -79,8 +79,10 @@ aws-data-engineering-labs-etl-elt/
 │
 ├── demo1-data-lake-athena/
 │   └── README.md         # Query raw data (ELT style)
+
 ├── demo2-etl-glue/
 │   └── etl_script.py     # ETL pipeline script
+│   └── README.md         # Query processed data (ETL style)
 │
 └── README.md
 ```
