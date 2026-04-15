@@ -4,41 +4,41 @@ from pyspark.sql.functions import col, when, regexp_replace, to_date
 from awsglue.context import GlueContext
 from pyspark.context import SparkContext
 
-# -----------------------------
-# Init Glue/Spark
-# -----------------------------
+# =========================================================
+# INITIALIZATION
+# =========================================================
+# Starting ETL processing (start pipeline)
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 
-# -----------------------------
-# Read ORDERS
-# -----------------------------
+# =========================================================
+# DATA DISCOVERY
+# =========================================================
+# Load raw datasets from S3 to understand structure and schema
 orders = spark.read.csv(
     "s3://etl-elt-lab-student1/data/raw/orders/",
     header=True,
     inferSchema=True
 )
 
-# -----------------------------
-# Read CUSTOMERS
-# -----------------------------
 customers = spark.read.csv(
     "s3://etl-elt-lab-student1/data/raw/customers/",
     header=True,
     inferSchema=True
 )
 
-# -----------------------------
-# CLEAN ORDERS
-# -----------------------------
+# =========================================================
+# DATA CLEANING
+# =========================================================
+# Fix missing values and incorrect formats in raw data
 
 orders_clean = orders.withColumn(
     "quantity",
     when(col("quantity").isNull(), 1).otherwise(col("quantity"))
 )
 
-# Force correct types (IMPORTANT FIX)
+# Handle inconsistent data types (force schema consistency)
 orders_clean = orders_clean.withColumn(
     "order_id", col("order_id").cast("int")
 ).withColumn(
@@ -46,24 +46,37 @@ orders_clean = orders_clean.withColumn(
 ).withColumn(
     "quantity", col("quantity").cast("int")
 ).withColumn(
-    "price", col("price").cast("double")   # 🔥 FIX: force DOUBLE
+    "price", col("price").cast("double")   # ensure numeric consistency
 )
 
-# Fix date format (2024/01/03 -> 2024-01-03)
+
+# =========================================================
+# DATA WRANGLING
+# =========================================================
+# Standardize inconsistent formats (e.g., date formatting issues)
+
 orders_clean = orders_clean.withColumn(
     "date",
     to_date(regexp_replace(col("date"), "/", "-"), "yyyy-MM-dd")
 )
 
-# Add derived column
+
+# =========================================================
+# DATA ENRICHING
+# =========================================================
+# Create new business metrics from existing data
+
 orders_clean = orders_clean.withColumn(
     "total_price",
     col("quantity") * col("price")
 )
 
-# -----------------------------
-# CLEAN CUSTOMERS
-# -----------------------------
+
+# =========================================================
+# DATA STRUCTURING
+# =========================================================
+# Normalize customer dataset for joining and analytics
+
 customers_clean = customers.withColumn(
     "customer_id",
     col("customer_id").cast("int")
@@ -72,24 +85,32 @@ customers_clean = customers.withColumn(
     when(col("country").isNull(), "Unknown").otherwise(col("country"))
 )
 
-# -----------------------------
-# JOIN DATASETS
-# -----------------------------
+# =========================================================
+# DATA ENRICHING
+# =========================================================
+# Combine datasets into a single analytical dataset
+
 final_df = orders_clean.join(
     customers_clean,
     on="customer_id",
     how="left"
 )
 
-# -----------------------------
-# DEBUG (VERY IMPORTANT)
-# -----------------------------
+
+# =========================================================
+# DATA VALIDATION
+# =========================================================
+# Verify final structure before writing output
+
 final_df.printSchema()
 final_df.show(10, truncate=False)
 
-# -----------------------------
-# WRITE OUTPUT (PARQUET)
-# -----------------------------
+
+# =========================================================
+# DATA PUBLISHING
+# =========================================================
+# Write cleaned + enriched dataset to S3 for analytics use
+
 final_df.write.mode("overwrite").parquet(
     "s3://etl-elt-lab-student1/data/processed/final/"
 )
